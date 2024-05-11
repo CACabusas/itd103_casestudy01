@@ -306,6 +306,20 @@ app.get('/admin/logout', (req, res) => {
     });
 });
 
+// Search function
+app.get('/admin/adminsearch', async (req, res) => {
+    const searchTerm = req.query.q;
+    console.log('Search Term:', searchTerm);
+    try {
+        const students = await StudentModel.find({ name: { $regex: new RegExp(searchTerm, 'i') } });
+        const teachers = await TeacherModel.find({ name: { $regex: new RegExp(searchTerm, 'i') } });
+        res.json({ students, teachers }); // Combine results into one object and send once
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Entry not found' });
+    }
+});
+
 // Get all teachers
 app.get('/admin/teachers', async (req, res) => {
     try {
